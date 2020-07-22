@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>websock test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function(){
+            console.log("document ready");
+
+            var socket = io.connect();
+
+            socket.on('connect', function(){
+                console.log('socket - connect');
+            });
+
+            socket.on('receiveChat', function(msg){
+                console.log("msg: " + msg);
+                $("#divChat").append('<p> ' + msg.username + ': ' + msg.data + '</p>');
+            });
+
+            $("#formChat").submit(function(event){
+                const msg = $("#inputChat").val();
+
+                if(msg == "") {
+                    return false;
+                }
+
+                console.log("request: " + msg);
+
+                socket.emit("sendChat", {data: msg});
+                $("#inputChat").val("");
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Chat Room Example</h1>
+    <div id="divChat">
+    </div>
+
+    <form id="formChat" action="#">
+        <input id="inputChat" type="text"/>
+        <input type="submit"/>
+    </form>
+</body>
+</html>
